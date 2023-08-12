@@ -1,0 +1,43 @@
+<h1>Configuration check</h1>
+{{#each validators}}
+    {{#if this.isSuccess}}
+    <h3>
+        <span style="color: green;">✓</span>
+        {{this.name}}
+    </h3>
+    <blockquote style="color: grey; font-size: small;">{{{this.desc}}}</blockquote>
+    {{#if this.image}}
+    <blockquote><img style="width: 100%; max-width: 500px;" src="./images/{{this.image}}.png" /></blockquote>
+    {{/if}}
+    <blockquote>
+        <small>設置結果:</small>
+        <code style="color: green;">
+        {{#if this.content}}
+            {{this.content}}
+        {{else}}
+            未設置
+        {{/if}}
+        </code>
+    </blockquote>
+    {{else}}
+    <h3>
+        <span style="color: red;">✖</span>
+        {{this.name}}
+    </h3>
+    <blockquote style="color: grey; font-size: small;">{{{this.desc}}}</blockquote>
+    {{#if this.image}}
+    <blockquote><img style="width: 100%; max-width: 500px;" src="./images/{{this.image}}.png" /></blockquote>
+    {{/if}}
+    <blockquote>
+        <small>設置結果:</small>
+        <code style="color: red;">
+        {{#if this.content}}
+            {{this.content}}
+        {{else}}
+            未設置
+        {{/if}}
+        </code>
+    </blockquote>
+    <blockquote><small>建議: {{this.suggestion}}</small></blockquote>
+    {{/if}}
+{{/each}}
