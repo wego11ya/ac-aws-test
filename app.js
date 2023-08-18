@@ -49,8 +49,8 @@ app.get('/', async (req, res) => {
         'db migration',
         '',
         `<div>驗證 eb create / eb deploy 後是否成功執行 migration</div>
-         <div>依據 .extensions/migration.config 裡的 container_commands，在 eb 部署後，會執行該設定中的 command: npm run dbmigrate，並依據 package.json 裡 scripts 的 dbmigrate，執行 npx sequelize db:migrate && npx sequelize db:seed:all</div>`,
-        '驗證前三項是否皆設定正確，並確認 .ebextension/migration.config 的指令正確，且在 package.json 的 scripts 裡加入 "dbmigrate": "npx sequelize db:migrate && npx sequelize db:seed:all"',
+         <div>依據 .ebextensions/migration.config 裡的 container_commands，在 eb 部署後，會執行該設定中的 command: npm run dbmigrate，並依據 package.json 裡 scripts 的 dbmigrate，執行 npx sequelize db:migrate && npx sequelize db:seed:all</div>`,
+        '驗證前三項是否皆設定正確，並確認 .ebextensions/migration.config 的指令正確，且在 package.json 的 scripts 裡加入 "dbmigrate": "npx sequelize db:migrate && npx sequelize db:seed:all"',
         false
     )
 

@@ -65,9 +65,9 @@ __`eb init` 使用的 platform 請選擇 `Node.js 18 running on 64bit Amazon Lin
 
     ```yaml
     container_commands:
-    db_migration:
-        command: "npm run dbmigrate"
-        leader_only: true
+        db_migration:
+            command: "npm run dbmigrate"
+            leader_only: true
     ```
 
     然後在 package.json 中，加入 dbmigrate 的指令
