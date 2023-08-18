@@ -40,7 +40,7 @@ app.get('/', async (req, res) => {
         env.DATABASE_URL && env.DATABASE_URL.replace(/\/\/.*\//, "//{{連線資訊已遮蔽}}/"),
         `<div>EB 環境變數  <strong style="color: red;">DATABASE_URL</strong>，用來設定 <strong>資料庫連線字串</strong></div>
          <div>當 config/config.json 對應環境的連線設置中加入 use_env_variable 時，依據 use_env_variable 指定的值，找到環境變數，並取用該環境變數值作為連線字串，為了統一做法，變數名稱需設定為 <strong style="color: red;">DATABASE_URL</strong></span>`,
-        '在 EB Configuration 中加入 DATABASE_URL 環境變數，值為 RDS 的連線字串，格式為 mysql://{{rds-user-name}}:{{rds-password}}@{{rds-url}}/{{db-name}}，如 mysql://admin:password@database-1.xxxxxxxx.ap-northeast-1.rds.amazonaws.com/test',
+        '在 EB Configuration 中加入 DATABASE_URL 環境變數，值為 RDS 的連線字串，格式為 mysql://{{rds-user-name}}:{{rds-password}}@{{rds-endpoint}}/{{db-name}}，如 mysql://admin:password@database-1.xxxxxxxx.ap-northeast-1.rds.amazonaws.com/test',
         'DATABASE_URL',
         !!env.DATABASE_URL
     ))
@@ -49,8 +49,8 @@ app.get('/', async (req, res) => {
         'db migration',
         '',
         `<div>驗證 eb create / eb deploy 後是否成功執行 migration</div>
-         <div>依據 .ebextensions/migration.config 裡的 container_commands，在 eb 部署後，會執行該設定中的 command: npm run dbmigrate，並依據 package.json 裡 scripts 的 dbmigrate，執行 npx sequelize db:migrate && npx sequelize db:seed:all</div>`,
-        '驗證前三項是否皆設定正確，並確認 .ebextensions/migration.config 的指令正確，且在 package.json 的 scripts 裡加入 "dbmigrate": "npx sequelize db:migrate && npx sequelize db:seed:all"',
+         <div>依據 .ebextensions/migration.config 裡的 container_commands，在 eb 部署後，按照 command 名稱依序執行</div>`,
+        '驗證前三項是否皆設定完成，並確認 .ebextensions/migration.config 的指令正確，如果部署失敗，可以透過 eb ssh 連線到 instance，並檢視 /var/log/cfn-init-cmd.log 以除錯',
         false
     )
 

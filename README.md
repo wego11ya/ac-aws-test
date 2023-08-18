@@ -1,8 +1,6 @@
 # aws-eb-example
 __請先確保執行過 `eb init` 及 `eb create`，並依照指示完成建置，在 `eb init`, `eb create` 及 RDS 設置遇到的問題，請先到[AWS 部署共筆](https://www.notion.so/achq/AWS-9efc39157ef54abc9d52b34202cdd7d2)中尋找可能的解答，或是到 discord 中詢問__
 
-__`eb init` 使用的 platform 請選擇 `Node.js 18 running on 64bit Amazon Linux 2` 版本__
-
 > 在這個專案中，控制了 sequelize 資料連線的錯誤，因此在 `eb create` 時不會有錯誤發生，但在其他專案裡，在資料連線設置未完整的情況下，`eb create` 可能會出現建置失敗的訊息
 
 ## 部署步驟
@@ -44,7 +42,7 @@ __`eb init` 使用的 platform 請選擇 `Node.js 18 running on 64bit Amazon Lin
 
 5. 設置 `DATABASE_URL` 環境變數
  
-    這裡的環境變數名稱依據步驟 4 設定 (即 `DATABASE_URL`)，而值設定為 RDS 的連線字串，格式為 `mysql://{{rds-user-name}}:{{rds-password}}@{{rds-url}}/{{db-name}}`
+    這裡的環境變數名稱依據步驟 4 設定 (即 `DATABASE_URL`)，而值設定為 RDS 的連線字串，格式為 `mysql://{{rds-user-name}}:{{rds-password}}@{{rds-endpoint}}/{{db-name}}`
     
     例如
 
@@ -65,27 +63,20 @@ __`eb init` 使用的 platform 請選擇 `Node.js 18 running on 64bit Amazon Lin
 
     ```yaml
     container_commands:
-        db_migration:
-            command: "npm run dbmigrate"
+        01_schema_migrate:
+            command: ./node_modules/.bin/sequelize db:migrate
+            leader_only: true
+        02_seeder_migrate:
+            command: ./node_modules/.bin/sequelize db:seed:all
             leader_only: true
     ```
 
-    然後在 package.json 中，加入 dbmigrate 的指令
-    
-    ```json
-    {
-        ...,
-        "scripts": {
-            ...
-            "dbmigrate": "npx sequelize db:migrate && npx sequelize db:seed:all"
-        },
-        ...
-    }
-    ```
-    目的是為了在 `eb deploy` 時，執行 .ebextensions/migration.config 裡的 command 指令，也就是 package.json 中加入的 dbmigrate，內容為透過 sequelize-cli 執行 schema 及 seeder migration
+    目的是為了在 `eb deploy` 時，執行 .ebextensions/migration.config 裡的 command 指令，也就是透過 sequelize 執行 db:migrate 及 db:seed:all，
 
     修改後，進行 git commit，再執行 `eb deploy`，待成功部署後，重新整理驗證結果，此時 __db migration__ 這一項應該為通過，且 `設置結果` 顯示的是 __資料正確__
 
+    > `01_schema_migrate` 及 `02_seeder_migrate` 是可以自定義的名稱，但要注意執行順序，eb 會依據 command 名稱排序執行，因此加入 01, 02 用以控制執行順序
+    
     > 在這一步如果發生錯誤，可以利用 `eb ssh` 連線到 container，透過 `cat /var/log/cfn-init-cmd.log` 查看錯誤內容
 
 ## 部署完成
